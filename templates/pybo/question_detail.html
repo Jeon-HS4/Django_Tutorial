@@ -48,6 +48,48 @@
     </div>
     <!-- 답변 -->
     <h5 class="border-bottom my-3 py-2">{{question.answer_set.count}}개의 답변이 있습니다.</h5>
+
+    <!-- 페이징 처리 시작 -->
+    <ul class="pagination justify-content-center">
+        <!-- 이전 페이지 -->
+        {% if answer_list.has_previous %}
+        <li class="page-item">
+            <a class="page-link" data-page="{{ answer_list.previous_page_number }}" href="javascript:void(0)">이전</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
+        </li>
+        {% endif %}
+        <!-- 페이지 리스트 -->
+        {% for page_number in answer_list.paginator.page_range %}
+        {% if page_number >= answer_list.number|add:-5 and page_number <= answer_list.number|add:5 %}
+        {% if page_number == answer_list.number %}
+        <li class="page-item activate" aria-current="page">
+            <a class="page-link" data-page="{{ page_number }}" href="javascript:void(0)">{{ page_number }}</a>
+        </li>
+        {% else %}
+        <li class="page_item">
+            <a class="page-link" data-page="{{ page_number }}" href="javascript:void(0)">{{ page_number }}</a>
+        </li>
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+        <!-- 다음 페이지 -->
+        {% if answer_list.has_next %}
+        <li class="page-item">
+            <a class="page-link" data-page="{{ answer_list.next_page_number }}" href="javascript:void(0)">다음</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
+        </li>
+        {% endif %}
+    </ul>
+    <!-- 페이징 처리 끝 -->
+
+
+
     {% for answer in question.answer_set.all %}
     <a id="answer_{{ answer.id }}"></a>
     <div class="card my-3">
@@ -117,7 +159,7 @@ Array.from(delete_elements).forEach(function(element) {
     });
 });
 const recommend_elements = document.getElementsByClassName("recommend");
-Array.from(recommend_delements).forEach(function(element) {
+Array.from(recommend_elements).forEach(function(element) {
     element.addEventListener('click', function() {
         if(confirm("정말로 추천하시겠습니까?")) {
             location.href = this.dataset.uri;
