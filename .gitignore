@@ -1,0 +1,4 @@
+.idea
+db.sqlite3
+*.pyi
+__pycache__
