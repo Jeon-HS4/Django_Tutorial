@@ -1,7 +1,7 @@
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
-from pybo.models import Question
+from pybo.models import Question, Answer
 import logging
 logger = logging.getLogger('pybo')
 
@@ -26,5 +26,9 @@ def index(request):
 
 def detail(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
-    context = {'question':question}
+    page = request.GET.get('page_number', '1')  # 페이지
+    answer_list = Answer.objects.filter(question=question).order_by('-create_date')
+    paginator = Paginator(answer_list, 5)  # 한 페이지에 10개씩 보여주기
+    page_obj = paginator.get_page(page)
+    context = {'question':question, 'answer_list':page_obj}
     return render(request,'pybo/question_detail.html',context)
